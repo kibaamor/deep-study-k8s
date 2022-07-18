@@ -1,0 +1,29 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: lifecycle-test
+  labels:
+    name: lifecycle-test
+spec:
+  containers:
+  - name: nginx
+    image: nginx
+    resources:
+      limits:
+        memory: "128Mi"
+        cpu: "500m"
+    ports:
+      - containerPort: 80 # kubectl port-forward pod/lifecycle-test :80
+    lifecycle:
+      postStart: # comparing with ENTRYPOINT, postStart has no strict execute order
+        exec:
+          command:
+            - "/bin/sh"
+            - "-c"
+            - "echo 'Hello from the postStart handler' > /usr/share/nginx/html/index.html"
+      preStop:
+        exec:
+          command:
+            - "/usr/sbin/nginx"
+            - "-s"
+            - "quit"

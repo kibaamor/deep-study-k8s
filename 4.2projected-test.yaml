@@ -1,0 +1,41 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: projected-test
+  labels:
+    name: projected-test
+    zone: us-est-coast
+    cluster: test-cluster1
+    rack: rack-22
+spec:
+  volumes:
+    - name: mysql-cred
+      projected:
+        sources:
+          - secret:
+              name: secret-test
+    - name: podinfo
+      projected:
+        sources:
+          - downwardAPI:
+              items:
+                - path: "labels"
+                  fieldRef:
+                    fieldPath: metadata.labels
+
+  containers:
+  - name: projected-test
+    image: busybox
+    stdin: true
+    tty: true
+    resources:
+      limits:
+        memory: "128Mi"
+        cpu: "500m"
+    volumeMounts:
+      - mountPath: /mysql-cred
+        name: mysql-cred
+        readOnly: true
+      - mountPath: /podinfo
+        name: podinfo
+        readOnly: false
