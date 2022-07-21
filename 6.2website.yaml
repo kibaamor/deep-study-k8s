@@ -10,6 +10,7 @@ spec:
   containers:
   - name: website
     image: nginx
+    imagePullPolicy: IfNotPresent
     resources:
       limits:
         memory: "128Mi"
