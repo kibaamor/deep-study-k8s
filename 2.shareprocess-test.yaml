@@ -11,8 +11,7 @@ spec:
   # hostPID: true
   containers:
   - name: nginx
-    image: nginx
-    imagePullPolicy: IfNotPresent
+    image: k8s.gcr.io/nginx-slim:0.8
     resources:
       limits:
         memory: "128Mi"
@@ -21,7 +20,6 @@ spec:
       - containerPort: 80 # kubectl port-forward pod/shareprocess-test :80
   - name: busybox # kubectl attach shareprocess-test -c busybox -it
     image: busybox
-    imagePullPolicy: IfNotPresent
     stdin: true
     tty: true
     resources:

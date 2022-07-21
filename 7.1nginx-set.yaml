@@ -16,5 +16,4 @@ spec:
     spec:
       containers:
         - name: nginx
-          image: nginx
-          imagePullPolicy: IfNotPresent
+          image: k8s.gcr.io/nginx-slim:0.8

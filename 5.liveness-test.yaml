@@ -9,7 +9,6 @@ spec:
   containers:
   - name: liveness
     image: busybox
-    imagePullPolicy: IfNotPresent
     resources:
       limits:
         memory: "128Mi"

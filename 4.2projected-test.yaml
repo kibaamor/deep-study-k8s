@@ -26,7 +26,6 @@ spec:
   containers:
   - name: projected-test
     image: busybox
-    imagePullPolicy: IfNotPresent
     stdin: true
     tty: true
     resources:

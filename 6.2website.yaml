@@ -9,8 +9,7 @@ metadata:
 spec:
   containers:
   - name: website
-    image: nginx
-    imagePullPolicy: IfNotPresent
+    image: k8s.gcr.io/nginx-slim:0.8
     resources:
       limits:
         memory: "128Mi"

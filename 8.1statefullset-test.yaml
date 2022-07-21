@@ -15,8 +15,7 @@ spec:
     spec:
       containers:
       - name: nginx
-        image: busybox:1.34
-        imagePullPolicy: IfNotPresent
+        image: k8s.gcr.io/nginx-slim:0.8
         args:
           - /bin/sh
           - -c

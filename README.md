@@ -36,7 +36,9 @@ Related files for <https://time.geekbang.org/column/intro/100015201>.
     alias kca="kubectl apply"
     alias kcd="kubectl delete"
     alias kcl="kubectl logs"
+    alias kcs="kubectl describe"
     alias kcga="kubectl get pod,rs,service,statefulset -o wide"
     # 'nslookup' command in busybox has issues.
     alias kcrnetdbg="kubectl run net-debug --image=nicolaka/netshoot --image-pull-policy=IfNotPresent -it --rm -- /bin/sh"
+    alias kcdnetdbg="kubectl delete pod/net-debug"
     ```
