@@ -8,6 +8,7 @@ spec:
   containers:
   - name: nginx
     image: nginx
+    imagePullPolicy: IfNotPresent
     resources:
       limits:
         memory: "128Mi"

@@ -11,6 +11,7 @@ spec:
   initContainers:
     - name: busybox
       image: busybox
+      imagePullPolicy: IfNotPresent
       volumeMounts:
         - mountPath: /shared-data
           name: shared-data
@@ -22,6 +23,7 @@ spec:
   containers:
   - name: nginx
     image: nginx
+    imagePullPolicy: IfNotPresent
     resources:
       limits:
         memory: "128Mi"

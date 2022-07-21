@@ -6,7 +6,7 @@ spec:
   selector:
     matchLabels:
       app: nginx
-  serviceName: web
+  serviceName: nginx-svc
   replicas: 2
   template:
     metadata:
@@ -15,7 +15,12 @@ spec:
     spec:
       containers:
       - name: nginx
-        image: nginx
+        image: busybox:1.34
+        imagePullPolicy: IfNotPresent
+        args:
+          - /bin/sh
+          - -c
+          - sleep 1d
         resources:
           limits:
             memory: "128Mi"

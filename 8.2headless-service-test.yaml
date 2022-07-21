@@ -8,4 +8,5 @@ spec:
   ports:
   - port: 80
     targetPort: http
+    name: http
   clusterIP: None # <pod-name>.<svc-name>.<namespace>.svc.cluster.local
