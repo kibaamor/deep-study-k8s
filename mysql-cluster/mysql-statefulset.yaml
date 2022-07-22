@@ -13,18 +13,8 @@ spec:
       labels:
         app: mysql
     spec:
-      volumes:
-        - name: mysql-setup
-          projected:
-            sources:
-              - configMap:
-                  name: mysql-configmap
-        - emptyDir: {}
-          name: mysql-init
-        - emptyDir: {}
-          name: mysql-conf
       initContainers:
-        - name: init-mysql
+        - name: init
           image: mysql:8.0.28
           env:
             - name: MASTER_HOST
@@ -53,15 +43,15 @@ spec:
             - |
               set -ex
 
-              # copy common mysql config
-              cp /mysql-setup/common.cnf /mysql-conf
-
               # get server-id from 'hostname'
               [[ `hostname` =~ -([0-9]+)$ ]] || exit 1
               ordinal=${BASH_REMATCH[1]}
               echo [mysqld] > /mysql-conf/server-id.cnf
               # server-id has a special meaning when it is equal to 0, so skip it by add 100
-              echo server-id=$((100 + $ordinal)) >> /mysql-conf/server-id.cnf
+              echo server-id=$(($(($ordinal+1))*100)) >> /mysql-conf/server-id.cnf
+
+              # copy common mysql config
+              cp /mysql-setup/common.cnf /mysql-conf
 
               if [[ $ordinal -eq 0 ]]; then
                 # master node
@@ -69,6 +59,7 @@ spec:
               else
                 # slave node
                 cp /mysql-setup/start_slave.sql /mysql-init
+                cp /mysql-setup/super_read_only.sh /mysql-init
               fi
 
               pushd /mysql-init
@@ -87,15 +78,33 @@ spec:
         - containerPort: 3306
           name: mysql
         env:
-          - name: MYSQL_ROOT_PASSWORD
-            valueFrom:
-              secretKeyRef:
-                key: root_pass
-                name: mysql-secret
+          - name: MYSQL_ALLOW_EMPTY_PASSWORD
+            value: "yes"
           - name: LANG
             value: en_US.UTF-8
           - name: TZ
             value: Asia/Shanghai
+        resources:
+          limits:
+            cpu: 1000m
+            memory: 2Gi
+        livenessProbe:
+          exec:
+            command:
+              - "mysqladmin"
+              - "ping"
+          initialDelaySeconds: 10
+          periodSeconds: 3
+          timeoutSeconds: 1
+        readinessProbe:
+          exec:
+            command:
+              - "mysql"
+              - "-e"
+              - "SELECT 1"
+          initialDelaySeconds: 10
+          periodSeconds: 2
+          timeoutSeconds: 1
         volumeMounts:
         - mountPath: /docker-entrypoint-initdb.d
           name: mysql-init
@@ -103,6 +112,16 @@ spec:
           name: mysql-conf
         - mountPath: /var/lib/mysql
           name: mysql-data
+      volumes:
+        - name: mysql-setup
+          projected:
+            sources:
+              - configMap:
+                  name: mysql-configmap
+        - emptyDir: {}
+          name: mysql-init
+        - emptyDir: {}
+          name: mysql-conf
   volumeClaimTemplates:
   - metadata:
       name: mysql-data

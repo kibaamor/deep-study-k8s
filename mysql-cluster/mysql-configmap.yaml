@@ -5,7 +5,7 @@ metadata:
 data:
   common.cnf: |
       [mysqld]
-      default-authentication-plugin=caching_sha2_password
+      default-authentication-plugin=mysql_native_password
       character-set-server=utf8mb4
       collation-server=utf8mb4_unicode_ci
       log-bin=mysql-bin
@@ -16,3 +16,8 @@ data:
   start_slave.sql: |
       CHANGE MASTER TO GET_MASTER_PUBLIC_KEY=1,MASTER_HOST='<MASTER_HOST>',MASTER_USER='<REPL_USER>',MASTER_PASSWORD='<REPL_PASS>';
       START SLAVE;
+  super_read_only.sh: |
+      cat << EOF > /etc/mysql/conf.d/super-read-only.cnf
+      [mysqld]
+      super-read-only=on
+      EOF
